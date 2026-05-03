@@ -1,708 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Birthday Surprise</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg-1:#120915;
-      --bg-2:#2f1027;
-      --bg-3:#5f1f46;
-      --gold:#ffd38a;
-      --pink:#ff7aa8;
-      --rose:#ff4f88;
-      --cream:#fff8f3;
-      --card:rgba(255,255,255,0.1);
-      --card-border:rgba(255,255,255,0.18);
-      --shadow:0 24px 60px rgba(0,0,0,0.32);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise</title>
 
-    *{
-      box-sizing:border-box;
-    }
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#1a0f1f;
+  color:white;
+  text-align:center;
+}
 
-    body{
-      margin:0;
-      min-height:100vh;
-      color:var(--cream);
-      font-family:'Nunito',sans-serif;
-      overflow:hidden;
-      background:
-        radial-gradient(circle at top, rgba(255,166,201,0.18), transparent 26%),
-        radial-gradient(circle at 20% 20%, rgba(255,211,138,0.14), transparent 24%),
-        linear-gradient(145deg, var(--bg-1), var(--bg-2) 50%, var(--bg-3));
-      transition:background 1.2s ease;
-    }
+.card{
+  max-width:700px;
+  margin:40px auto;
+  padding:20px;
+}
 
-    body.final-stage{
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,0.75), transparent 25%),
-        linear-gradient(160deg, #fff2f5, #ffd7e5 55%, #ffbdd1);
-      color:#5c1535;
-    }
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:20px;
+  background:#ff4f88;
+  color:white;
+  cursor:pointer;
+}
 
-    .background-glow,
-    .stars,
-    #effects,
-    #fireworkLayer{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-    }
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
+  margin-top:20px;
+}
 
-    .background-glow::before,
-    .background-glow::after{
-      content:"";
-      position:absolute;
-      border-radius:50%;
-      filter:blur(22px);
-      opacity:.5;
-      animation:floatGlow 9s ease-in-out infinite;
-    }
+.gallery img{
+  width:100%;
+  border-radius:10px;
+}
 
-    .background-glow::before{
-      width:260px;
-      height:260px;
-      top:8%;
-      left:8%;
-      background:rgba(255,122,168,0.25);
-    }
-
-    .background-glow::after{
-      width:300px;
-      height:300px;
-      right:6%;
-      bottom:10%;
-      background:rgba(255,211,138,0.18);
-      animation-delay:-4s;
-    }
-
-    .spark{
-      position:absolute;
-      width:3px;
-      height:3px;
-      border-radius:50%;
-      background:rgba(255,255,255,.9);
-      animation:twinkle linear infinite;
-    }
-
-    .fall{
-      position:absolute;
-      top:-10vh;
-      font-size:clamp(18px,2vw,28px);
-      animation:fall linear forwards;
-      opacity:.9;
-      filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));
-    }
-
-    .shell{
-      position:relative;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      z-index:1;
-    }
-
-    .card{
-      width:min(760px,100%);
-      padding:32px 26px;
-      border:1px solid var(--card-border);
-      border-radius:28px;
-      background:var(--card);
-      backdrop-filter:blur(18px);
-      box-shadow:var(--shadow);
-      text-align:center;
-      position:relative;
-      overflow:hidden;
-      animation:rise 1s ease;
-    }
-
-    .login-card{
-      width:min(460px,100%);
-    }
-
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(135deg, rgba(255,255,255,.12), transparent 35%, rgba(255,255,255,.08));
-      pointer-events:none;
-    }
-
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.14);
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:.72rem;
-      font-weight:700;
-      margin-bottom:16px;
-    }
-
-    h1,h2{
-      font-family:'Cormorant Garamond',serif;
-      line-height:1;
-      margin:0 0 14px;
-    }
-
-    h1{
-      font-size:clamp(3rem,8vw,5.3rem);
-    }
-
-    h2{
-      font-size:clamp(2.4rem,6vw,4rem);
-    }
-
-    p{
-      margin:10px auto;
-      font-size:1.05rem;
-      line-height:1.75;
-      max-width:580px;
-    }
-
-    .lead{
-      font-size:1.18rem;
-      color:rgba(255,248,243,0.88);
-    }
-
-    .buttons{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:24px;
-    }
-
-    .input-group{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      max-width:320px;
-      margin:22px auto 0;
-    }
-
-    input{
-      width:100%;
-      border:none;
-      outline:none;
-      border-radius:16px;
-      padding:15px 16px;
-      font:600 1rem 'Nunito',sans-serif;
-      color:var(--cream);
-      background:rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.14);
-    }
-
-    input::placeholder{
-      color:rgba(255,248,243,0.62);
-    }
-
-    .login-note{
-      margin-top:14px;
-      min-height:24px;
-      font-size:0.95rem;
-      color:#ffd38a;
-    }
-
-    button{
-      border:none;
-      border-radius:999px;
-      padding:14px 24px;
-      font:700 0.98rem 'Nunito',sans-serif;
-      cursor:pointer;
-      transition:transform .25s ease, box-shadow .25s ease, opacity .25s ease;
-    }
-
-    button:hover{
-      transform:translateY(-2px) scale(1.02);
-    }
-
-    .primary{
-      background:linear-gradient(135deg, #ff7aa8, #ff4f88);
-      color:white;
-      box-shadow:0 14px 34px rgba(255,79,136,0.35);
-    }
-
-    .secondary{
-      background:rgba(255,255,255,0.08);
-      color:var(--cream);
-      border:1px solid rgba(255,255,255,0.16);
-    }
-
-    .story-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
-      gap:14px;
-      margin-top:24px;
-    }
-
-    .story-card{
-      padding:18px 16px;
-      border-radius:20px;
-      background:rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.14);
-      text-align:left;
-    }
-
-    .story-card strong{
-      display:block;
-      margin-bottom:8px;
-      color:var(--gold);
-      font-size:1rem;
-    }
-
-    .surprise-note{
-      margin:22px auto 0;
-      padding:18px;
-      border-radius:20px;
-      background:rgba(255,255,255,0.08);
-      border:1px dashed rgba(255,211,138,0.45);
-      max-width:600px;
-    }
-
-    .gallery{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
-      gap:14px;
-      margin-top:24px;
-    }
-
-    .gallery img{
-      width:100%;
-      aspect-ratio:1/1;
-      object-fit:cover;
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,0.14);
-      box-shadow:0 12px 28px rgba(0,0,0,0.2);
-      background:rgba(255,255,255,0.08);
-    }
-
-    .gallery-item{
-      aspect-ratio:1/1;
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,0.14);
-      box-shadow:0 12px 28px rgba(0,0,0,0.2);
-      overflow:hidden;
-      background:rgba(255,255,255,0.08);
-    }
-
-    .gallery-note{
-      margin-top:16px;
-      font-size:0.96rem;
-      color:rgba(255,248,243,0.82);
-    }
-
-    .photo-wrap{
-      width:min(320px, 82vw);
-      aspect-ratio:4/5;
-      margin:22px auto 16px;
-      padding:10px;
-      background:linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,229,238,0.95));
-      border-radius:30px;
-      box-shadow:0 20px 40px rgba(131,29,73,0.18);
-      transform:rotate(-2deg);
-    }
-
-    .photo-wrap img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      border-radius:22px;
-      display:block;
-      background:#f4d6df;
-    }
-
-    .photo-caption{
-      font-size:0.98rem;
-      font-weight:700;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      color:#9f2f5b;
-    }
-
-    .photo-fallback{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:18px;
-      font-weight:700;
-      color:#9f2f5b;
-      background:linear-gradient(135deg, #ffe7ef, #ffd4e2);
-    }
-
-    .gallery-fallback{
-      width:100%;
-      height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:12px;
-      font-weight:700;
-      color:rgba(255,248,243,0.9);
-      background:linear-gradient(135deg, rgba(255,122,168,0.5), rgba(95,31,70,0.7));
-    }
-
-    .hidden{
-      display:none;
-    }
-
-    .message-pop{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%, -50%);
-      min-width:220px;
-      padding:14px 18px;
-      border-radius:18px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow:var(--shadow);
-      animation:popIn .45s ease;
-      z-index:3;
-    }
-
-    .firework{
-      position:absolute;
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      animation:burst 1.1s ease-out forwards;
-      box-shadow:
-        0 -38px 0 currentColor,
-        0 38px 0 currentColor,
-        38px 0 0 currentColor,
-        -38px 0 0 currentColor,
-        28px 28px 0 currentColor,
-        -28px -28px 0 currentColor,
-        28px -28px 0 currentColor,
-        -28px 28px 0 currentColor;
-    }
-
-    @keyframes rise{
-      from{opacity:0; transform:translateY(22px) scale(.97);}
-      to{opacity:1; transform:translateY(0) scale(1);}
-    }
-
-    @keyframes popIn{
-      from{opacity:0; transform:translate(-50%, -38%) scale(.85);}
-      to{opacity:1; transform:translate(-50%, -50%) scale(1);}
-    }
-
-    @keyframes fall{
-      to{transform:translateY(120vh) rotate(360deg);}
-    }
-
-    @keyframes twinkle{
-      0%,100%{opacity:.18; transform:scale(.7);}
-      50%{opacity:.95; transform:scale(1.6);}
-    }
-
-    @keyframes floatGlow{
-      0%,100%{transform:translateY(0) translateX(0);}
-      50%{transform:translateY(18px) translateX(12px);}
-    }
-
-    @keyframes burst{
-      0%{transform:scale(.25); opacity:1;}
-      100%{transform:scale(1.35); opacity:0;}
-    }
-
-    @media (max-width:640px){
-      .card{
-        padding:28px 18px;
-      }
-
-      p{
-        font-size:1rem;
-        line-height:1.65;
-      }
-
-      .buttons{
-        gap:10px;
-      }
-
-      button{
-        width:100%;
-      }
-    }
-  </style>
+.gallery-fallback{
+  background:#333;
+  padding:20px;
+  border-radius:10px;
+}
+</style>
 </head>
+
 <body>
-  <div class="background-glow"></div>
-  <div class="stars" id="stars"></div>
-  <div id="effects"></div>
-  <div id="fireworkLayer"></div>
 
-  <audio id="music" loop>
-    <source src="music.mp3" type="audio/mpeg">
-  </audio>
+<div class="card">
+  <div id="screen"></div>
+</div>
 
-  <main class="shell">
-    <section class="card" id="card">
-      <div id="screen"></div>
-    </section>
-  </main>
+<audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
-  <script>
-    const screen = document.getElementById("screen");
-    const effects = document.getElementById("effects");
-    const stars = document.getElementById("stars");
-    const fireworkLayer = document.getElementById("fireworkLayer");
-    const music = document.getElementById("music");
+<script>
+const screen = document.getElementById("screen");
+const music = document.getElementById("music");
 
-    const notes = [
-      "Arju, you make ordinary days feel magical.",
-      "Your smile can make any moment brighter.",
-      "Your friendship is one of the most beautiful gifts in my life.",
-      "Today is all about celebrating the kind and lovely person you are."
-    ];
-    const memoryPhotos = ["photo1.jpg", "photo2.jpg", "photo3.jpg", "photo4.jpg", "photo5.jpg"];
-    const loginUsername = "Jahid";
-    const loginPassword = "24235142";
+const loginUsername = "Jahid";
+const loginPassword = "24235142";
 
-    let noteIndex = 0;
+const memoryPhotos = [
+  "./photo1.jpg",
+  "./photo2.jpg",
+  "./photo3.jpg",
+  "./photo4.jpg",
+  "./photo5.jpg"
+];
 
-    function createStars() {
-      for (let i = 0; i < 42; i++) {
-        const spark = document.createElement("span");
-        spark.className = "spark";
-        spark.style.left = Math.random() * 100 + "vw";
-        spark.style.top = Math.random() * 100 + "vh";
-        spark.style.animationDuration = 2 + Math.random() * 4 + "s";
-        spark.style.animationDelay = Math.random() * 3 + "s";
-        stars.appendChild(spark);
-      }
-    }
+// 🔥 FIX cache
+function getFresh(src){
+  return src + "?v=" + new Date().getTime();
+}
 
-    function dropEffects() {
-      const fall = document.createElement("div");
-      fall.className = "fall";
-      fall.textContent = Math.random() > 0.5 ? "\u2764" : "\uD83C\uDF39";
-      fall.style.left = Math.random() * 100 + "vw";
-      fall.style.animationDuration = 8 + Math.random() * 5 + "s";
-      fall.style.opacity = 0.6 + Math.random() * 0.4;
-      effects.appendChild(fall);
-      setTimeout(() => fall.remove(), 13000);
-    }
+// LOGIN PAGE
+function renderLogin(){
+  screen.innerHTML = `
+    <h2>Login</h2>
+    <input id="user" placeholder="Username"><br><br>
+    <input id="pass" type="password" placeholder="Password"><br><br>
+    <button onclick="checkLogin()">Open</button>
+    <p id="msg"></p>
+  `;
+}
 
-    setInterval(dropEffects, 280);
-    createStars();
+function checkLogin(){
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
 
-    function renderLogin() {
-      document.getElementById("card").classList.add("login-card");
-      screen.innerHTML = `
-        <div class="tag">Private Birthday Page</div>
-        <h2>Welcome</h2>
-        <p class="lead">This surprise page opens only with your login details.</p>
-        <div class="input-group">
-          <input id="username" type="text" placeholder="Enter username">
-          <input id="password" type="password" placeholder="Enter password">
-        </div>
-        <div class="buttons">
-          <button class="primary" onclick="checkLogin()">Open Surprise</button>
-        </div>
-        <div class="login-note" id="loginNote">Use your username and password to continue.</div>
-      `;
-    }
+  if(u===loginUsername && p===loginPassword){
+    renderIntro();
+  }else{
+    document.getElementById("msg").innerText="Wrong login!";
+  }
+}
 
-    function checkLogin() {
-      const username = document.getElementById("username")?.value.trim();
-      const password = document.getElementById("password")?.value.trim();
-      const loginNote = document.getElementById("loginNote");
+// INTRO
+function renderIntro(){
+  screen.innerHTML = `
+    <h1>Happy Birthday 🎉</h1>
+    <p>Click to start your surprise</p>
+    <button onclick="renderStory()">Start</button>
+  `;
+}
 
-      if (username === loginUsername && password === loginPassword) {
-        document.getElementById("card").classList.remove("login-card");
-        renderIntro();
-        return;
-      }
+// STORY
+function renderStory(){
+  screen.innerHTML = `
+    <h2>You are special ❤️</h2>
+    <button onclick="playMusicAndContinue()">Continue</button>
+  `;
+}
 
-      if (loginNote) {
-        loginNote.textContent = "Wrong username or password. Please try again.";
-      }
-    }
+// MUSIC FIX
+function playMusicAndContinue(){
+  music.currentTime = 0;
 
-    function renderIntro() {
-      document.getElementById("card").classList.remove("login-card");
-      screen.innerHTML = `
-        <div class="tag">A little birthday magic</div>
-        <h1>Happy Birthday, Arju</h1>
-        <p class="lead">I made a tiny world filled with memories, warmth, and surprises just for my best friend.</p>
-        <p>Close your eyes for one second, make a wish, and then press the button below.</p>
-        <div class="buttons">
-          <button class="primary" onclick="renderQuestion()">Open Your Surprise</button>
-        </div>
-      `;
-    }
+  music.play().then(()=>{
+    console.log("music started");
+  }).catch(()=>{
+    alert("Tap again to enable music 🎵");
+  });
 
-    function renderQuestion() {
-      screen.innerHTML = `
-        <div class="tag">One more thing</div>
-        <h2>Do you want to see how special you are to me, Arju?</h2>
-        <p>There are sweet words, lovely memories, and one final page made especially for my best friend.</p>
-        <div class="buttons">
-          <button class="primary" onclick="renderStory()">Yes, show me</button>
-          <button class="secondary" onclick="showPopup()">Maybe later</button>
-        </div>
-      `;
-    }
+  renderGallery();
+}
 
-    function showPopup() {
-      const popup = document.createElement("div");
-      popup.className = "message-pop";
-      popup.textContent = "No skipping allowed today, bestie.";
-      document.body.appendChild(popup);
-      setTimeout(() => popup.remove(), 1800);
-    }
+// GLOBAL CLICK FIX
+document.body.addEventListener("click", ()=>{
+  music.play().catch(()=>{});
+},{once:true});
 
-    function renderStory() {
-      screen.innerHTML = `
-        <div class="tag">Why you are unforgettable</div>
-        <h2>You make life brighter, softer, and happier</h2>
-        <p>Arju, your friendship carries a kind of magic that turns simple moments into beautiful memories.</p>
-        <div class="story-grid">
-          <article class="story-card">
-            <strong>Your Smile</strong>
-            It can lift the mood of an entire day in a second.
-          </article>
-          <article class="story-card">
-            <strong>Your Kindness</strong>
-            Caring, gentle, and genuine in a way that makes people feel safe around you.
-          </article>
-          <article class="story-card">
-            <strong>Your Presence</strong>
-            Even ordinary moments feel special when you are part of them.
-          </article>
-        </div>
-        <div class="buttons">
-          <button class="primary" onclick="playMusicAndContinue()">Play Music and Continue</button>
-        </div>
-      `;
-    }
+// GALLERY
+function renderGallery(){
+  const gallery = memoryPhotos.map((p,i)=>`
+    <div>
+      <img src="${getFresh(p)}"
+      onerror="this.outerHTML='<div class=gallery-fallback>Missing ${p}</div>'">
+    </div>
+  `).join("");
 
-    function playMusicAndContinue() {
-      music.play().catch(() => {});
-      renderLoveLetter();
-    }
+  screen.innerHTML = `
+    <h2>Memories 💖</h2>
+    <div class="gallery">${gallery}</div>
+    <br>
+    <button onclick="finalPage()">Final Surprise</button>
+  `;
+}
 
-    function renderLoveLetter() {
-      const currentNote = notes[noteIndex % notes.length];
-      noteIndex++;
-      screen.innerHTML = `
-        <div class="tag">Secret note unlocked</div>
-        <h2>To my dearest best friend</h2>
-        <p>
-          Arju, from the moment you became part of my life, so many days started feeling brighter.
-          Your laugh became one of my favorite sounds, your happiness became something I truly care about,
-          and your friendship became a gift I never want to lose.
-        </p>
-        <div class="surprise-note">
-          <strong>Surprise note:</strong>
-          <p>${currentNote}</p>
-        </div>
-        <div class="buttons">
-          <button class="primary" onclick="renderDreamPage()">Next Surprise</button>
-          <button class="secondary" onclick="renderLoveLetter()">Show Another Note</button>
-        </div>
-      `;
-    }
+// FINAL
+function finalPage(){
+  screen.innerHTML = `
+    <h2>Final Message 💝</h2>
+    <img src="./her-photo.jpg" style="width:200px;border-radius:10px"
+    onerror="this.outerHTML='<div class=gallery-fallback>Add her-photo.jpg</div>'">
+    <p>You are amazing. Happy Birthday 🎂</p>
+  `;
+}
 
-    function renderDreamPage() {
-      const galleryMarkup = memoryPhotos.map((photo, index) => `
-        <div class="gallery-item">
-          <img src="${photo}" alt="Memory photo ${index + 1}" onerror="this.outerHTML='&lt;div class=&quot;gallery-fallback&quot;&gt;Add photo as&lt;br&gt;&lt;strong&gt;${photo}&lt;/strong&gt;&lt;/div&gt;'">
-        </div>
-      `).join("");
+// START
+renderLogin();
+</script>
 
-      screen.innerHTML = `
-        <div class="tag">A small wish for us</div>
-        <h2>If I could gift you one world</h2>
-        <p>
-          It would be filled with peaceful mornings, long laughter, soft sunsets,
-          and every dream you whisper becoming real one by one.
-        </p>
-        <p>
-          And in every version of that world, I would still be grateful for a best friend like you.
-        </p>
-        <div class="gallery">
-          ${galleryMarkup}
-        </div>
-        <p class="gallery-note">Put 5 memory pictures in this folder as photo1.jpg, photo2.jpg, photo3.jpg, photo4.jpg, and photo5.jpg.</p>
-        <div class="buttons">
-          <button class="primary" onclick="launchFinale()">Open Final Surprise</button>
-        </div>
-      `;
-    }
-
-    function launchFinale() {
-      burstFireworks();
-      setTimeout(renderFinalPage, 700);
-    }
-
-    function burstFireworks() {
-      for (let i = 0; i < 22; i++) {
-        const firework = document.createElement("div");
-        firework.className = "firework";
-        firework.style.left = Math.random() * 100 + "vw";
-        firework.style.top = Math.random() * 100 + "vh";
-        firework.style.color = ["#ff4f88", "#ffd166", "#ffffff", "#ff8fab"][i % 4];
-        fireworkLayer.appendChild(firework);
-        setTimeout(() => firework.remove(), 1200);
-      }
-    }
-
-    function renderFinalPage() {
-      document.body.classList.add("final-stage");
-      screen.innerHTML = `
-        <div class="tag" style="background:rgba(159,47,91,0.08); border-color:rgba(159,47,91,0.14); color:#8a2750;">The final page</div>
-        <h2>Arju, my favorite best friend</h2>
-        <div class="photo-wrap">
-          <img src="her-photo.jpg" alt="Her beautiful photo" onerror="this.outerHTML='&lt;div class=&quot;photo-fallback&quot;&gt;Add her photo as &lt;br&gt;&lt;strong&gt;her-photo.jpg&lt;/strong&gt;&lt;/div&gt;'">
-        </div>
-        <div class="photo-caption">A beautiful soul I am lucky to know</div>
-        <p>
-          Happy Birthday, Arju. You are precious, rare, and deeply appreciated.
-          Thank you for being such an amazing best friend and for bringing warmth to so many moments.
-        </p>
-        <div class="surprise-note" style="background:rgba(255,255,255,0.55); border-color:rgba(159,47,91,0.25);">
-          <strong>Final surprise note:</strong>
-          <p>
-            No matter how many birthdays come and go, I will always be grateful that
-            someone as kind, lovely, and special as you exists in my life. Your friendship means so much to me.
-          </p>
-        </div>
-        <div class="buttons">
-          <button class="primary" onclick="shareSurprise()">Share This Page</button>
-          <button class="secondary" onclick="burstFireworks()">More Fireworks</button>
-        </div>
-      `;
-    }
-
-    function shareSurprise() {
-      if (navigator.share) {
-        navigator.share({
-          title: "Birthday Surprise",
-          text: "A special birthday surprise made with love.",
-          url: window.location.href
-        }).catch(() => {});
-        return;
-      }
-      alert("Sharing is not supported on this device, but the surprise is ready to send.");
-    }
-
-    renderLogin();
-  </script>
 </body>
-</html>..how can i update this github 
+</html>
