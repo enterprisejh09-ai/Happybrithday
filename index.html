@@ -28,7 +28,7 @@
     body{
       min-height:100vh;
       overflow-x:hidden;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color:var(--cream);
       background:
         radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 20%),
@@ -111,7 +111,7 @@
     }
 
     h1,h2{
-      font-family: Georgia, "Times New Roman", serif;
+      font-family:Georgia, "Times New Roman", serif;
       line-height:1.06;
       margin-bottom:16px;
     }
@@ -156,7 +156,7 @@
       border-radius:999px;
       font-size:16px;
       font-weight:700;
-      transition:transform .2s ease, opacity .2s ease;
+      transition:transform .2s ease;
     }
 
     button:hover{
@@ -543,13 +543,15 @@
 
     async function playMusicAndContinue(){
       const musicMsg = document.getElementById("musicMsg");
+
       try{
         await music.play();
         if(musicMsg) musicMsg.textContent = "Music started.";
       } catch(err){
-        if(musicMsg) musicMsg.textContent = "Music could not play. Add music.mp3 in the same folder.";
+        if(musicMsg) musicMsg.textContent = "Music could not play. Continuing without music.";
       }
-      setTimeout(renderLoveLetter, 300);
+
+      setTimeout(renderLoveLetter, 250);
     }
 
     function renderLoveLetter(){
