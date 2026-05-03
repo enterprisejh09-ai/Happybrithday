@@ -1,171 +1,671 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday Surprise</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Surprise for Arju</title>
+  <style>
+    :root{
+      --bg1:#1b0b1b;
+      --bg2:#4a1836;
+      --bg3:#7f2f5a;
+      --pink:#ff6fa5;
+      --rose:#ff4f88;
+      --gold:#ffd67a;
+      --cream:#fff7f8;
+      --glass:rgba(255,255,255,0.12);
+      --glass-border:rgba(255,255,255,0.18);
+      --text-soft:rgba(255,247,248,0.86);
+      --shadow:0 22px 60px rgba(0,0,0,0.28);
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:#1a0f1f;
-  color:white;
-  text-align:center;
-}
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
 
-.card{
-  max-width:700px;
-  margin:40px auto;
-  padding:20px;
-}
+    body{
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color:var(--cream);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 20%),
+        radial-gradient(circle at bottom right, rgba(255,111,165,0.16), transparent 25%),
+        linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+    }
 
-button{
-  padding:12px 20px;
-  border:none;
-  border-radius:20px;
-  background:#ff4f88;
-  color:white;
-  cursor:pointer;
-}
+    body.final-bg{
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.45), transparent 20%),
+        linear-gradient(145deg, #fff1f5, #ffd9e7, #ffc2d7);
+      color:#6d1c45;
+    }
 
-.gallery{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:10px;
-  margin-top:20px;
-}
+    .floating-bg,
+    .fireworks-layer,
+    .stars{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
 
-.gallery img{
-  width:100%;
-  border-radius:10px;
-}
+    .star{
+      position:absolute;
+      width:3px;
+      height:3px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.9);
+      animation:twinkle linear infinite;
+    }
 
-.gallery-fallback{
-  background:#333;
-  padding:20px;
-  border-radius:10px;
-}
-</style>
+    .falling{
+      position:absolute;
+      top:-40px;
+      font-size:24px;
+      animation:fall linear forwards;
+      opacity:0.9;
+      filter:drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+    }
+
+    .container{
+      position:relative;
+      z-index:1;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(820px, 100%);
+      background:var(--glass);
+      border:1px solid var(--glass-border);
+      border-radius:28px;
+      backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
+      padding:34px 24px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card.small{
+      max-width:460px;
+    }
+
+    .tag{
+      display:inline-block;
+      padding:8px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.18);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      margin-bottom:18px;
+    }
+
+    h1,h2{
+      font-family: Georgia, "Times New Roman", serif;
+      line-height:1.06;
+      margin-bottom:16px;
+    }
+
+    h1{
+      font-size:clamp(42px, 8vw, 76px);
+    }
+
+    h2{
+      font-size:clamp(34px, 6vw, 58px);
+    }
+
+    p{
+      max-width:640px;
+      margin:0 auto 14px;
+      line-height:1.8;
+      font-size:18px;
+      color:var(--text-soft);
+    }
+
+    body.final-bg p{
+      color:#7d3157;
+    }
+
+    .lead{
+      font-size:20px;
+    }
+
+    .buttons{
+      margin-top:24px;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:none;
+      outline:none;
+      cursor:pointer;
+      padding:14px 24px;
+      border-radius:999px;
+      font-size:16px;
+      font-weight:700;
+      transition:transform .2s ease, opacity .2s ease;
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+    }
+
+    .primary{
+      background:linear-gradient(135deg, var(--pink), var(--rose));
+      color:#fff;
+      box-shadow:0 12px 28px rgba(255,79,136,0.35);
+    }
+
+    .secondary{
+      background:rgba(255,255,255,0.10);
+      color:#fff;
+      border:1px solid rgba(255,255,255,0.16);
+    }
+
+    .input-wrap{
+      max-width:320px;
+      margin:22px auto 0;
+      display:grid;
+      gap:14px;
+    }
+
+    input{
+      width:100%;
+      padding:15px 16px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.08);
+      color:#fff;
+      font-size:16px;
+      outline:none;
+    }
+
+    input::placeholder{
+      color:rgba(255,255,255,0.65);
+    }
+
+    .note-line{
+      margin-top:14px;
+      min-height:24px;
+      font-size:15px;
+      color:var(--gold);
+    }
+
+    .traits{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
+      gap:14px;
+    }
+
+    .trait{
+      text-align:left;
+      padding:18px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+    }
+
+    .trait strong{
+      display:block;
+      color:var(--gold);
+      margin-bottom:8px;
+      font-size:18px;
+    }
+
+    .surprise-box{
+      margin:24px auto 0;
+      max-width:620px;
+      padding:18px;
+      border-radius:22px;
+      background:rgba(255,255,255,0.08);
+      border:1px dashed rgba(255,214,122,0.45);
+    }
+
+    .gallery{
+      margin-top:24px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(130px,1fr));
+      gap:14px;
+    }
+
+    .gallery-item{
+      aspect-ratio:1/1;
+      border-radius:22px;
+      overflow:hidden;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.16);
+      box-shadow:0 10px 24px rgba(0,0,0,0.18);
+    }
+
+    .gallery-item img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .placeholder{
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      padding:10px;
+      background:linear-gradient(135deg, rgba(255,111,165,0.45), rgba(77,24,54,0.85));
+      color:#fff;
+      font-weight:700;
+      line-height:1.45;
+      font-size:15px;
+    }
+
+    .placeholder strong{
+      margin-top:6px;
+      font-size:15px;
+    }
+
+    .gallery-help{
+      margin-top:16px;
+      font-size:15px;
+    }
+
+    .final-photo-wrap{
+      width:min(320px, 82vw);
+      aspect-ratio:4/5;
+      margin:24px auto 14px;
+      border-radius:28px;
+      padding:10px;
+      background:linear-gradient(135deg, #fff, #ffe2ec);
+      box-shadow:0 18px 40px rgba(118,30,71,0.2);
+      transform:rotate(-2deg);
+    }
+
+    .final-photo-wrap img,
+    .final-photo-wrap .placeholder{
+      width:100%;
+      height:100%;
+      border-radius:20px;
+      object-fit:cover;
+      display:block;
+    }
+
+    .caption{
+      font-size:15px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:12px;
+      color:#9f2f5b;
+    }
+
+    .popup{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%, -50%);
+      background:rgba(255,255,255,0.14);
+      border:1px solid rgba(255,255,255,0.18);
+      border-radius:18px;
+      padding:14px 18px;
+      box-shadow:var(--shadow);
+      z-index:9;
+      animation:pop .35s ease;
+    }
+
+    .firework{
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      animation:burst 1.1s ease-out forwards;
+      box-shadow:
+        0 -40px 0 currentColor,
+        0 40px 0 currentColor,
+        40px 0 0 currentColor,
+        -40px 0 0 currentColor,
+        28px 28px 0 currentColor,
+        -28px -28px 0 currentColor,
+        28px -28px 0 currentColor,
+        -28px 28px 0 currentColor;
+    }
+
+    @keyframes fall{
+      to{ transform:translateY(115vh) rotate(360deg); }
+    }
+
+    @keyframes twinkle{
+      0%,100%{ opacity:.2; transform:scale(.8); }
+      50%{ opacity:1; transform:scale(1.8); }
+    }
+
+    @keyframes pop{
+      from{ opacity:0; transform:translate(-50%, -40%) scale(.9); }
+      to{ opacity:1; transform:translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes burst{
+      0%{ transform:scale(.2); opacity:1; }
+      100%{ transform:scale(1.25); opacity:0; }
+    }
+
+    @media (max-width:640px){
+      .card{
+        padding:28px 18px;
+      }
+
+      p{
+        font-size:16px;
+      }
+
+      .lead{
+        font-size:18px;
+      }
+
+      button{
+        width:100%;
+      }
+
+      .buttons{
+        gap:10px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="stars" id="stars"></div>
+  <div class="floating-bg" id="floatingBg"></div>
+  <div class="fireworks-layer" id="fireworksLayer"></div>
 
-<div class="card">
-  <div id="screen"></div>
-</div>
+  <audio id="music" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
 
-<audio id="music" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-const screen = document.getElementById("screen");
-const music = document.getElementById("music");
-
-const loginUsername = "Jahid";
-const loginPassword = "24235142";
-
-const memoryPhotos = [
-  "./photo1.jpg",
-  "./photo2.jpg",
-  "./photo3.jpg",
-  "./photo4.jpg",
-  "./photo5.jpg"
-];
-
-// 🔥 FIX cache
-function getFresh(src){
-  return src + "?v=" + new Date().getTime();
-}
-
-// LOGIN PAGE
-function renderLogin(){
-  screen.innerHTML = `
-    <h2>Login</h2>
-    <input id="user" placeholder="Username"><br><br>
-    <input id="pass" type="password" placeholder="Password"><br><br>
-    <button onclick="checkLogin()">Open</button>
-    <p id="msg"></p>
-  `;
-}
-
-function checkLogin(){
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
-
-  if(u===loginUsername && p===loginPassword){
-    renderIntro();
-  }else{
-    document.getElementById("msg").innerText="Wrong login!";
-  }
-}
-
-// INTRO
-function renderIntro(){
-  screen.innerHTML = `
-    <h1>Happy Birthday 🎉</h1>
-    <p>Click to start your surprise</p>
-    <button onclick="renderStory()">Start</button>
-  `;
-}
-
-// STORY
-function renderStory(){
-  screen.innerHTML = `
-    <h2>You are special ❤️</h2>
-    <button onclick="playMusicAndContinue()">Continue</button>
-  `;
-}
-
-// MUSIC FIX
-function playMusicAndContinue(){
-  music.currentTime = 0;
-
-  music.play().then(()=>{
-    console.log("music started");
-  }).catch(()=>{
-    alert("Tap again to enable music 🎵");
-  });
-
-  renderGallery();
-}
-
-// GLOBAL CLICK FIX
-document.body.addEventListener("click", ()=>{
-  music.play().catch(()=>{});
-},{once:true});
-
-// GALLERY
-function renderGallery(){
-  const gallery = memoryPhotos.map((p,i)=>`
-    <div>
-      <img src="${getFresh(p)}"
-      onerror="this.outerHTML='<div class=gallery-fallback>Missing ${p}</div>'">
+  <div class="container">
+    <div class="card small" id="card">
+      <div id="screen"></div>
     </div>
-  `).join("");
+  </div>
 
-  screen.innerHTML = `
-    <h2>Memories 💖</h2>
-    <div class="gallery">${gallery}</div>
-    <br>
-    <button onclick="finalPage()">Final Surprise</button>
-  `;
-}
+  <script>
+    const USERNAME = "Jahid";
+    const PASSWORD = "24235142";
+    const GALLERY_PHOTOS = ["photo1.jpg", "photo2.jpg", "photo3.jpg", "photo4.jpg", "photo5.jpg"];
+    const FINAL_PHOTO = "her-photo.jpg";
 
-// FINAL
-function finalPage(){
-  screen.innerHTML = `
-    <h2>Final Message 💝</h2>
-    <img src="./her-photo.jpg" style="width:200px;border-radius:10px"
-    onerror="this.outerHTML='<div class=gallery-fallback>Add her-photo.jpg</div>'">
-    <p>You are amazing. Happy Birthday 🎂</p>
-  `;
-}
+    const notes = [
+      "Arju, your friendship makes ordinary days feel special.",
+      "Your smile brings peace and happiness wherever it goes.",
+      "You are one of the sweetest and most genuine people I know.",
+      "Having a best friend like you is a gift I will always value."
+    ];
 
-// START
-renderLogin();
-</script>
+    const screen = document.getElementById("screen");
+    const card = document.getElementById("card");
+    const music = document.getElementById("music");
+    const floatingBg = document.getElementById("floatingBg");
+    const fireworksLayer = document.getElementById("fireworksLayer");
+    const stars = document.getElementById("stars");
 
+    let noteIndex = 0;
+
+    function makeStars(){
+      for(let i = 0; i < 40; i++){
+        const s = document.createElement("span");
+        s.className = "star";
+        s.style.left = Math.random() * 100 + "vw";
+        s.style.top = Math.random() * 100 + "vh";
+        s.style.animationDuration = (2 + Math.random() * 4) + "s";
+        s.style.animationDelay = (Math.random() * 4) + "s";
+        stars.appendChild(s);
+      }
+    }
+
+    function startFalling(){
+      setInterval(() => {
+        const el = document.createElement("div");
+        el.className = "falling";
+        el.textContent = Math.random() > 0.5 ? "❤" : "🌹";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.animationDuration = (7 + Math.random() * 5) + "s";
+        floatingBg.appendChild(el);
+        setTimeout(() => el.remove(), 12000);
+      }, 320);
+    }
+
+    function popup(text){
+      const p = document.createElement("div");
+      p.className = "popup";
+      p.textContent = text;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1800);
+    }
+
+    function setSmallCard(isSmall){
+      card.classList.toggle("small", isSmall);
+    }
+
+    function renderLogin(){
+      document.body.classList.remove("final-bg");
+      setSmallCard(true);
+      screen.innerHTML = `
+        <div class="tag">Private Birthday Page</div>
+        <h2>Welcome</h2>
+        <p class="lead">This special page opens only with your username and password.</p>
+        <div class="input-wrap">
+          <input id="username" type="text" placeholder="Enter username">
+          <input id="password" type="password" placeholder="Enter password">
+        </div>
+        <div class="buttons">
+          <button class="primary" onclick="checkLogin()">Open Surprise</button>
+        </div>
+        <div class="note-line" id="loginMsg">Login to enter the surprise page.</div>
+      `;
+    }
+
+    function checkLogin(){
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
+      const msg = document.getElementById("loginMsg");
+
+      if(u === USERNAME && p === PASSWORD){
+        renderIntro();
+      } else {
+        msg.textContent = "Wrong username or password.";
+      }
+    }
+
+    function renderIntro(){
+      setSmallCard(false);
+      screen.innerHTML = `
+        <div class="tag">A Little Birthday Magic</div>
+        <h1>Happy Birthday, Arju</h1>
+        <p class="lead">I made this page with love, memories, and sweet surprises for my best friend.</p>
+        <p>Close your eyes for one second, make a wish, and then open your surprise.</p>
+        <div class="buttons">
+          <button class="primary" onclick="renderQuestion()">Open Your Surprise</button>
+        </div>
+      `;
+    }
+
+    function renderQuestion(){
+      screen.innerHTML = `
+        <div class="tag">One More Thing</div>
+        <h2>Do you want to see how special you are, Arju?</h2>
+        <p>There are sweet words, memory pictures, and one final page made especially for you.</p>
+        <div class="buttons">
+          <button class="primary" onclick="renderStory()">Yes, show me</button>
+          <button class="secondary" onclick="popup('No skipping today, bestie.')">Maybe later</button>
+        </div>
+      `;
+    }
+
+    function renderStory(){
+      screen.innerHTML = `
+        <div class="tag">Why You Are Special</div>
+        <h2>You make life brighter and happier</h2>
+        <p>Arju, your friendship turns simple moments into beautiful memories.</p>
+        <div class="traits">
+          <div class="trait">
+            <strong>Your Smile</strong>
+            It can make even an ordinary day feel warm and joyful.
+          </div>
+          <div class="trait">
+            <strong>Your Kindness</strong>
+            You are caring, gentle, and naturally make people feel comfortable.
+          </div>
+          <div class="trait">
+            <strong>Your Presence</strong>
+            Every moment feels better when you are part of it.
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="primary" onclick="playMusicAndContinue()">Play Music and Continue</button>
+          <button class="secondary" onclick="renderLoveLetter()">Continue Without Music</button>
+        </div>
+        <div class="note-line" id="musicMsg"></div>
+      `;
+    }
+
+    async function playMusicAndContinue(){
+      const musicMsg = document.getElementById("musicMsg");
+      try{
+        await music.play();
+        if(musicMsg) musicMsg.textContent = "Music started.";
+      } catch(err){
+        if(musicMsg) musicMsg.textContent = "Music could not play. Add music.mp3 in the same folder.";
+      }
+      setTimeout(renderLoveLetter, 300);
+    }
+
+    function renderLoveLetter(){
+      const currentNote = notes[noteIndex % notes.length];
+      noteIndex++;
+
+      screen.innerHTML = `
+        <div class="tag">Secret Note Unlocked</div>
+        <h2>To My Dearest Best Friend</h2>
+        <p>
+          Arju, your friendship means so much to me. Your happiness matters,
+          your smile is precious, and your presence makes life feel lighter and sweeter.
+        </p>
+        <div class="surprise-box">
+          <p><strong>Surprise note:</strong></p>
+          <p>${currentNote}</p>
+        </div>
+        <div class="buttons">
+          <button class="primary" onclick="renderGallery()">Next Surprise</button>
+          <button class="secondary" onclick="renderLoveLetter()">Show Another Note</button>
+        </div>
+      `;
+    }
+
+    function galleryItemMarkup(file){
+      return `
+        <div class="gallery-item">
+          <img
+            src="${file}"
+            alt="${file}"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <div class="placeholder" style="display:none;">
+            Add this photo
+            <strong>${file}</strong>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGallery(){
+      const items = GALLERY_PHOTOS.map(galleryItemMarkup).join("");
+
+      screen.innerHTML = `
+        <div class="tag">Memory Gallery</div>
+        <h2>If I could gift you one world</h2>
+        <p>
+          It would be full of peaceful mornings, long laughter, soft sunsets,
+          and every dream you whisper coming true one by one.
+        </p>
+        <p>
+          And in every version of that world, I would still be grateful for a best friend like you.
+        </p>
+        <div class="gallery">${items}</div>
+        <p class="gallery-help">Add exactly 5 gallery photos as photo1.jpg, photo2.jpg, photo3.jpg, photo4.jpg, and photo5.jpg.</p>
+        <div class="buttons">
+          <button class="primary" onclick="launchFinale()">Open Final Surprise</button>
+        </div>
+      `;
+    }
+
+    function launchFinale(){
+      burstFireworks();
+      setTimeout(renderFinalPage, 650);
+    }
+
+    function burstFireworks(){
+      for(let i = 0; i < 22; i++){
+        const fw = document.createElement("div");
+        fw.className = "firework";
+        fw.style.left = Math.random() * 100 + "vw";
+        fw.style.top = Math.random() * 100 + "vh";
+        fw.style.color = ["#ff4f88", "#ffd166", "#ffffff", "#ff9fbc"][i % 4];
+        fireworksLayer.appendChild(fw);
+        setTimeout(() => fw.remove(), 1200);
+      }
+    }
+
+    function renderFinalPage(){
+      document.body.classList.add("final-bg");
+      screen.innerHTML = `
+        <div class="tag" style="background:rgba(159,47,91,0.08); border-color:rgba(159,47,91,0.18); color:#8a2750;">The Final Page</div>
+        <h2>Arju, My Favorite Best Friend</h2>
+        <div class="final-photo-wrap">
+          <img
+            src="${FINAL_PHOTO}"
+            alt="Arju photo"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <div class="placeholder" style="display:none; color:#8a2750; background:linear-gradient(135deg,#fff3f7,#ffd6e5);">
+            Add final photo
+            <strong>${FINAL_PHOTO}</strong>
+          </div>
+        </div>
+        <div class="caption">A beautiful soul I am lucky to know</div>
+        <p>
+          Happy Birthday, Arju. You are precious, kind, and deeply appreciated.
+          Thank you for being such an amazing best friend.
+        </p>
+        <div class="surprise-box" style="background:rgba(255,255,255,0.5); border-color:rgba(159,47,91,0.22);">
+          <p><strong>Final surprise note:</strong></p>
+          <p>
+            No matter how many birthdays come and go, I will always be grateful
+            that someone as lovely and special as you exists in my life.
+            Your friendship means more than words can say.
+          </p>
+        </div>
+        <div class="buttons">
+          <button class="primary" onclick="burstFireworks()">More Fireworks</button>
+        </div>
+      `;
+    }
+
+    makeStars();
+    startFalling();
+    renderLogin();
+  </script>
 </body>
 </html>
